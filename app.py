@@ -30,14 +30,16 @@ def read_root():
     return {"Hello": "World"}
 
 @app.get("/get")
-def read_root():
+def read_root(gender: str, age: str, weight: str, muscle: str, goal: str):
     result = ''
 
     stream = client.chat.completions.create(
         messages=[
             {
                 "role": "user",
-                "content": "hello. tell me a introduce your self.",
+                "content": """성별, 나이, 몸무게, 키, 골격근량, 목표를 입력하면, 너는 아침, 점심, 저녁에 해당하는 메뉴를 {\아침: 메뉴 배열, 점심: 메뉴 배열, 저녁: 메뉴 배열\} 형식으로 추천해줘
+
+성별={gender}, 나이={age}, 몸무게={weight}, 골격근량={muscle}, 목표={goal}""".format(gender=gender,age=age,weight=weight,muscle=muscle,goal=goal),
             }
         ],
         model="gpt-3.5-turbo",
@@ -48,7 +50,6 @@ def read_root():
     for chunk in stream:
         result += chunk.choices[0].delta.content or ""
 
-    print(result)
     return {
         "result": result
     }
